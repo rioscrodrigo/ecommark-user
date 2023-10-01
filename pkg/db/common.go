@@ -6,6 +6,8 @@ import (
 	"ecommark-user/pkg/model"
 	"ecommark-user/pkg/secret"
 	"os"
+
+	_ "github.com/go-sql-driver/mysql"
 )
 
 var SecretModel model.SecretRDSJson
