@@ -1,13 +1,13 @@
 package secret
 
 import (
+	"ecommark-user/cmd/logger"
 	"ecommark-user/pkg/awsgo"
 	"ecommark-user/pkg/model"
 	"encoding/json"
-	"fmt"
 
+	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/secretsmanager"
-	"github.com/aws/aws-sdk-go/aws"
 )
 
 func GetSecret(secretName string) (model.SecretRDSJson, error) {
@@ -17,7 +17,7 @@ func GetSecret(secretName string) (model.SecretRDSJson, error) {
 		SecretId: aws.String(secretName),
 	})
 	if err != nil {
-		fmt.Println("error getting secret")
+		logger.Error("error getting secret")
 		return secretData, err
 	}
 	json.Unmarshal([]byte(*key.SecretString), &secretData)

@@ -2,11 +2,11 @@ package main
 
 import (
 	"context"
+	"ecommark-user/cmd/logger"
 	"ecommark-user/pkg/awsgo"
 	"ecommark-user/pkg/db"
 	"ecommark-user/pkg/model"
 	"errors"
-	"fmt"
 	"os"
 
 	"github.com/aws/aws-lambda-go/events"
@@ -14,13 +14,16 @@ import (
 )
 
 func main() {
+	logger.Info("Starting lambda...")
 	lambda.Start(LambdaExec)
 }
 
 func LambdaExec(ctx context.Context, event events.CognitoEventUserPoolsPostConfirmation) (events.CognitoEventUserPoolsPostConfirmation, error) {
+	logger.Info("Lambda execution started")
 	awsgo.AWSInit()
+
 	if !ValidateParams() {
-		fmt.Println("missing parameters")
+		logger.Error("missing parameters")
 		err := errors.New("missing parameters")
 		return event, err
 	}
@@ -36,10 +39,11 @@ func LambdaExec(ctx context.Context, event events.CognitoEventUserPoolsPostConfi
 	}
 	err := db.ReadSecret()
 	if err != nil {
-		fmt.Println("error reading secret")
+		logger.Error("error reading secret")
 		return event, err
 	}
-	return event, nil
+	err = db.SignUp(datos)
+	return event, err
 }
 
 func ValidateParams() bool {
